@@ -82,7 +82,63 @@
 <span id="77">77</span>
 <span id="78">78</span>
 <span id="79">79</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">nalgebra</span>::{<span class="ident">Point2</span>, <span class="ident">Unit</span>, <span class="ident">Vector2</span>};
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+</pre><pre class="rust"><code><span class="kw">use</span> {
+    <span class="kw">crate</span>::{
+        <span class="ident">line</span>::{<span class="ident">DistanceToPoint</span>, <span class="ident">Ray</span>},
+        <span class="ident">operations::perp_unit2d</span>,
+    },
+    <span class="ident">nalgebra</span>::{<span class="ident">Point2</span>, <span class="ident">Unit</span>, <span class="ident">Vector2</span>},
+};
 
 <span class="doccomment">/// A line in 2-dimensions which extends infinitely in either direction.</span>
 <span class="doccomment">///</span>
@@ -129,7 +185,9 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">normal</span>: <span class="ident">Unit</span><span class="op">&lt;</span><span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">c</span>: <span class="ident">f32</span>) -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">normal</span>, <span class="ident">c</span> }
     }
+}
 
+<span class="kw">impl</span> <span class="ident">DistanceToPoint</span> <span class="kw">for</span> <span class="ident">Line</span> {
     <span class="doccomment">/// Compute the distance from the point to the line. The output is signed</span>
     <span class="doccomment">/// and can therefore be used to tell if the given point is &#39;above&#39; or</span>
     <span class="doccomment">/// &#39;below&#39; the line based on the normal vector.</span>
@@ -137,7 +195,7 @@
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">///     use ::{</span>
-    <span class="doccomment">///         compgeo::line::Line,</span>
+    <span class="doccomment">///         compgeo::line::{DistanceToPoint, Line},</span>
     <span class="doccomment">///         nalgebra::{Point2, Unit, vector, point},</span>
     <span class="doccomment">///         approx::assert_relative_eq,</span>
     <span class="doccomment">///     };</span>
@@ -155,10 +213,52 @@
     <span class="doccomment">///</span>
     <span class="doccomment">///     assert_relative_eq!(distance, -0.58578646);</span>
     <span class="doccomment">///</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">distance_to_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">point</span>: <span class="kw-2">&amp;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span>) -&gt; <span class="ident">f32</span> {
+    <span class="kw">fn</span> <span class="ident">distance_to_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">point</span>: <span class="kw-2">&amp;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span>) -&gt; <span class="ident">f32</span> {
         <span class="comment">// This equation works because the normal vector is always of unit</span>
         <span class="comment">// length</span>
         (<span class="self">self</span>.<span class="ident">normal</span>.<span class="ident">x</span> <span class="op">*</span> <span class="ident">point</span>.<span class="ident">x</span>) <span class="op">+</span> (<span class="self">self</span>.<span class="ident">normal</span>.<span class="ident">y</span> <span class="op">*</span> <span class="ident">point</span>.<span class="ident">y</span>) <span class="op">+</span> <span class="self">self</span>.<span class="ident">c</span>
+    }
+
+    <span class="doccomment">/// The squared distance from the line to a point.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This can be useful if other algorithms are using squared distance for</span>
+    <span class="doccomment">/// calculations.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Note: this actually a little more expensive to compute than</span>
+    <span class="doccomment">///       [`Line::distance_to_point`].</span>
+    <span class="kw">fn</span> <span class="ident">distance_to_point_squared</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">point</span>: <span class="kw-2">&amp;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span>) -&gt; <span class="ident">f32</span> {
+        <span class="kw">let</span> <span class="ident">distance</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">distance_to_point</span>(<span class="ident">point</span>);
+        <span class="ident">distance</span> <span class="op">*</span> <span class="ident">distance</span>
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Ray</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Line</span> {
+    <span class="doccomment">/// Build an infinite line based on this ray&#39;s direction and position.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///     use ::{</span>
+    <span class="doccomment">///         compgeo::line::{Line, Ray},</span>
+    <span class="doccomment">///         nalgebra::{Point2, Unit, vector, point},</span>
+    <span class="doccomment">///         approx::assert_relative_eq,</span>
+    <span class="doccomment">///     };</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///     let ray = Ray::new(</span>
+    <span class="doccomment">///         point![1.0, 1.0],</span>
+    <span class="doccomment">///         Unit::new_normalize(vector![1.0, 1.0])</span>
+    <span class="doccomment">///     );</span>
+    <span class="doccomment">///     let line: Line = ray.into();</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///     assert_relative_eq!(</span>
+    <span class="doccomment">///         line.normal,</span>
+    <span class="doccomment">///         Unit::new_normalize(vector![-1.0, 1.0])</span>
+    <span class="doccomment">///     );</span>
+    <span class="doccomment">///     assert_relative_eq!(line.c, 0.0);</span>
+    <span class="doccomment">///</span>
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">ray</span>: <span class="ident">Ray</span>) -&gt; <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span> <span class="ident">perp_unit2d</span>(<span class="kw-2">&amp;</span><span class="ident">ray</span>.<span class="ident">direction</span>);
+        <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="op">-</span><span class="ident">Line::new</span>(<span class="ident">normal</span>, <span class="number">0.0</span>).<span class="ident">distance_to_point</span>(<span class="kw-2">&amp;</span><span class="ident">ray</span>.<span class="ident">origin</span>);
+        <span class="ident">Line::new</span>(<span class="ident">normal</span>, <span class="ident">c</span>)
     }
 }
 </code></pre></div>

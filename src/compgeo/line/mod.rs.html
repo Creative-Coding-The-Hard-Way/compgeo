@@ -10,13 +10,21 @@
 <span id="5">5</span>
 <span id="6">6</span>
 <span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Structs and algorithms for Lines in two dimensions.</span>
 
+<span class="kw">mod</span> <span class="ident">distance_to_point</span>;
 <span class="kw">mod</span> <span class="ident">infinite</span>;
 <span class="kw">mod</span> <span class="ident">ray</span>;
 <span class="kw">mod</span> <span class="ident">segment</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::{<span class="ident">infinite::Line</span>, <span class="ident">ray::Ray</span>, <span class="ident">segment::Segment</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::{
+    <span class="ident">distance_to_point::DistanceToPoint</span>, <span class="ident">infinite::Line</span>, <span class="ident">ray::Ray</span>,
+    <span class="ident">segment::Segment</span>,
+};
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="compgeo" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
 </body></html>
