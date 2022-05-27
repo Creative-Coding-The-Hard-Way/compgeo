@@ -35,7 +35,6 @@ impl Segment {
     /// |  y |                                               |
     /// +----------------------------------------------------+
     /// ```
-    ///
     ///     use ::{
     ///         nalgebra::{point, Point2},
     ///         compgeo::line::Segment,
