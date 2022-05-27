@@ -18,7 +18,7 @@ use {
 /// Where the vector `(a, b)` is the normal vector to the line and `c` is the
 /// offset along the normal.
 ///
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Line {
     /// The normal vector for the line - the vector which is perpendicular to
     /// the line.

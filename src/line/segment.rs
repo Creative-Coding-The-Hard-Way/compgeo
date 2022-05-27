@@ -1,7 +1,7 @@
 use {crate::line::DistanceToPoint, nalgebra::Point2};
 
 /// A line-segment defined by a start point and an end point.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Segment {
     pub start: Point2<f32>,
     pub end: Point2<f32>,

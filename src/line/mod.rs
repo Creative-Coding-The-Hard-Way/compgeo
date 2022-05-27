@@ -5,6 +5,8 @@ mod infinite;
 mod ray;
 mod segment;
 
+pub mod intersection;
+
 pub use self::{
     distance_to_point::DistanceToPoint, infinite::Line, ray::Ray,
     segment::Segment,

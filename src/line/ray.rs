@@ -14,7 +14,7 @@ use {
 /// Where `P` is the origin point for the Ray and `V` is the direction the
 /// Ray points.
 ///
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Ray {
     /// The Ray's origin in 2d space.
     pub origin: Point2<f32>,
