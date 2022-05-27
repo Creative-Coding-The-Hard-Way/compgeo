@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["SegmentIntersection","This type represents the intersection between two line segments."]],"fn":[["intersect_segments","Compute the intersection between two line segments."]]});

@@ -294,7 +294,7 @@
 <span class="doccomment">/// Where `P` is the origin point for the Ray and `V` is the direction the</span>
 <span class="doccomment">/// Ray points.</span>
 <span class="doccomment">///</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Ray</span> {
     <span class="doccomment">/// The Ray&#39;s origin in 2d space.</span>
     <span class="kw">pub</span> <span class="ident">origin</span>: <span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span>,
