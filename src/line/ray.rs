@@ -1,5 +1,7 @@
-use crate::{line::Line, operations::perp_unit2d};
-use nalgebra::{Point2, Unit, Vector2};
+use {
+    crate::line::{DistanceToPoint, Segment},
+    nalgebra::{Point2, Unit, Vector2},
+};
 
 /// A Ray is a half-line which begins at an origin point.
 ///
@@ -69,6 +71,13 @@ impl Ray {
         Self { origin, direction }
     }
 
+    /// Create a line segment from this Ray with a given length.
+    pub fn as_segment(&self, length: f32) -> Segment {
+        Segment::new(self.origin, self.origin + self.direction.scale(length))
+    }
+}
+
+impl DistanceToPoint for Ray {
     /// Compute the signed distance from the ray to a point in space.
     ///
     /// A positive value means that the point is 'in front' of the ray's origin
@@ -100,7 +109,7 @@ impl Ray {
     /// +----------------------------------------------------+
     /// ```
     ///     use ::{
-    ///         compgeo::line::Ray,
+    ///         compgeo::line::{DistanceToPoint, Ray},
     ///         nalgebra::{Point2, Unit, vector, point},
     ///         approx::assert_relative_eq,
     ///     };
@@ -143,7 +152,7 @@ impl Ray {
     /// +----------------------------------------------------+
     /// ```
     ///     use ::{
-    ///         compgeo::line::Ray,
+    ///         compgeo::line::{DistanceToPoint, Ray},
     ///         nalgebra::{Point2, Unit, vector, point},
     ///         approx::assert_relative_eq,
     ///     };
@@ -160,7 +169,7 @@ impl Ray {
     ///     );
     ///
     ///
-    pub fn distance_to_point(&self, point: &Point2<f32>) -> f32 {
+    fn distance_to_point(&self, point: &Point2<f32>) -> f32 {
         let w = point - self.origin;
         let projection = w.dot(&self.direction);
         if projection <= 0.0 {
@@ -171,34 +180,96 @@ impl Ray {
             (w - self.direction.scale(projection)).norm()
         }
     }
+
+    /// Compute the squared distance to the given point.
+    ///
+    /// The semantics are identical to [`DistanceToPoint::distance_to_point`].
+    fn distance_to_point_squared(&self, point: &nalgebra::Point2<f32>) -> f32 {
+        let w = point - self.origin;
+        let projection = w.dot(&self.direction);
+        if projection <= 0.0 {
+            // The projection can only be below 0 when the point is *behind*
+            // the origin (relative to the direction vector)
+            -w.norm_squared()
+        } else {
+            (w - self.direction.scale(projection)).norm_squared()
+        }
+    }
 }
 
-impl From<Ray> for Line {
-    /// Build an infinite line based on this ray's direction and position.
+impl From<Segment> for Ray {
+    /// Create a Ray which starts at the segment's `start` point and points
+    /// towards the `end` point.
     ///
     /// # Example
     ///
+    /// Turn a segment like:
+    ///
+    /// ```none
+    /// +----------------------------------------------------+
+    /// |    ^                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                  -+           |
+    /// |    |                               --/ end(12,6)   |
+    /// |    +                           ---/                |
+    /// |    |                        --/                    |
+    /// |    +                     --/                       |
+    /// |    |                 ---/                          |
+    /// |    +              --/                              |
+    /// |    |           --/                                 |
+    /// |    +       ---/                                    |
+    /// |    |    --/                                        |
+    /// |    +  +/ start(1, 1)                               |
+    /// |    |                                               |
+    /// |x---+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+> |
+    /// |    |                                               |
+    /// |  y |                                               |
+    /// +----------------------------------------------------+
+    /// ```
+    ///
+    /// Into a ray like:
+    ///
+    /// ```none
+    /// +----------------------------------------------------+
+    /// |    ^                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |          direction(0.910366, 0.413803)        |
+    /// |    +        ->                                     |
+    /// |    |    ---/                                       |
+    /// |    +  +/                                           |
+    /// |    |   origin(1, 1)                                |
+    /// |x---+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+> |
+    /// |    |                                               |
+    /// |  y |                                               |
+    /// +----------------------------------------------------+
+    /// ```
     ///     use ::{
-    ///         compgeo::line::{Line, Ray},
-    ///         nalgebra::{Point2, Unit, vector, point},
+    ///         compgeo::line::{Segment, Ray},
+    ///         nalgebra::{Point2, point, vector, Unit},
     ///         approx::assert_relative_eq,
     ///     };
     ///
-    ///     let ray = Ray::new(
-    ///         point![1.0, 1.0],
-    ///         Unit::new_normalize(vector![1.0, 1.0])
-    ///     );
-    ///     let line: Line = ray.into();
+    ///     let segment = Segment::new(point![1.0, 1.0], point![12.0, 6.0]);
+    ///     let ray: Ray = segment.into();
     ///
+    ///     assert_relative_eq!(ray.origin, point![1.0, 1.0]);
     ///     assert_relative_eq!(
-    ///         line.normal,
-    ///         Unit::new_normalize(vector![-1.0, 1.0])
+    ///         ray.direction,
+    ///         Unit::new_unchecked(vector![0.9103665, 0.41380295])
     ///     );
-    ///     assert_relative_eq!(line.c, 0.0);
     ///
-    fn from(ray: Ray) -> Self {
-        let normal = perp_unit2d(&ray.direction);
-        let c = -Line::new(normal, 0.0).distance_to_point(&ray.origin);
-        Line::new(normal, c)
+    fn from(segment: Segment) -> Self {
+        let direction = Unit::new_normalize(segment.end - segment.start);
+        let origin = segment.start;
+        Ray::new(origin, direction)
     }
 }

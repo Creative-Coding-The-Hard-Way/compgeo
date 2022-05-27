@@ -1,7 +1,11 @@
 //! Structs and algorithms for Lines in two dimensions.
 
+mod distance_to_point;
 mod infinite;
 mod ray;
 mod segment;
 
-pub use self::{infinite::Line, ray::Ray, segment::Segment};
+pub use self::{
+    distance_to_point::DistanceToPoint, infinite::Line, ray::Ray,
+    segment::Segment,
+};
