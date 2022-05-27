@@ -1,3 +1,5 @@
+//! Misc. operations on points and vectors in 2d.
+
 use nalgebra::{vector, Unit, Vector2};
 
 /// Compute a perpendicular vector by rotating the given vector 90 degrees

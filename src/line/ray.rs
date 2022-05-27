@@ -1,16 +1,15 @@
 use crate::{line::Line, operations::perp_unit2d};
-use nalgebra::{vector, Point2, Unit, Vector2};
+use nalgebra::{Point2, Unit, Vector2};
 
-/// A Ray is a half-line - a point in space with a line extending infinitely
-/// far in a given direction from that point.
+/// A Ray is a half-line which begins at an origin point.
 ///
 /// The points on a Ray are defined parametrically with the following equation:
 ///
 /// ```math
-/// P(t) = P_0 + t*V_L
+/// Ray(t) = P + t*V
 /// ```
 ///
-/// Where `P_0` is the origin point for the Ray and `V_L` is the direction the
+/// Where `P` is the origin point for the Ray and `V` is the direction the
 /// Ray points.
 ///
 #[derive(Debug, Copy, Clone)]
@@ -32,6 +31,30 @@ impl Ray {
     ///
     /// # Example
     ///
+    /// Create a ray which looks like
+    ///
+    /// ```none
+    /// +----------------------------------------------------+
+    /// |    ^                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +              >                                |
+    /// |    |            -/  Ray Direction - Unit(1, 1)     |
+    /// |    +           /                                   |
+    /// |    |         -/                                    |
+    /// |    +        /                                      |
+    /// |    |      -/                                       |
+    /// |    +     /                                         |
+    /// |    |   -/                                          |
+    /// |    +  + Ray Origin (1, 1)                          |
+    /// |    |                                               |
+    /// |x---+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+> |
+    /// |    |                                               |
+    /// |  y |                                               |
+    /// +----------------------------------------------------+
+    /// ```
     ///     use ::{
     ///         compgeo::line::Ray,
     ///         nalgebra::{Point2, Unit, vector, point},
@@ -54,6 +77,28 @@ impl Ray {
     ///
     /// # Example 1 - Behind
     ///
+    /// ```none
+    /// +----------------------------------------------------+
+    /// |    ^                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +     ^                                         |
+    /// |    |     |                                         |
+    /// |    +     |  Ray at (2, 2) with direction (0, 1)    |
+    /// |    |     |                                         |
+    /// |    +     +                                         |
+    /// |    |                                               |
+    /// |    +  + Point at (1, 1)                            |
+    /// |    |                                               |
+    /// |x---+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+> |
+    /// |    |                                               |
+    /// |  y |                                               |
+    /// +----------------------------------------------------+
+    /// ```
     ///     use ::{
     ///         compgeo::line::Ray,
     ///         nalgebra::{Point2, Unit, vector, point},
@@ -61,18 +106,42 @@ impl Ray {
     ///     };
     ///
     ///     let ray = Ray::new(
-    ///         point![1.0, 1.0],
+    ///         point![2.0, 2.0],
     ///         Unit::new_normalize(vector![0.0, 1.0])
     ///     );
-    ///     let point = point![-2.0, 0.0];
+    ///     let point = point![1.0, 1.0];
     ///
+    ///     // distance is negative because the point is "behind" the ray's
+    ///     // origin relative to the direction vector
     ///     assert_relative_eq!(
     ///         ray.distance_to_point(&point),
-    ///         (ray.origin - point).norm()
+    ///         -(ray.origin - point).norm()
     ///     );
     ///
     /// # Example 2 - In Front
     ///
+    /// ```none
+    /// +----------------------------------------------------+
+    /// |    ^                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |    +  + Point at (1, 5)                            |
+    /// |    |                                               |
+    /// |    +     ^                                         |
+    /// |    |     |                                         |
+    /// |    +     |  Ray at (2, 2) with direction (0, 1)    |
+    /// |    |     |                                         |
+    /// |    +     +                                         |
+    /// |    |                                               |
+    /// |    +                                               |
+    /// |    |                                               |
+    /// |x---+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+> |
+    /// |    |                                               |
+    /// |  y |                                               |
+    /// +----------------------------------------------------+
+    /// ```
     ///     use ::{
     ///         compgeo::line::Ray,
     ///         nalgebra::{Point2, Unit, vector, point},
@@ -80,14 +149,14 @@ impl Ray {
     ///     };
     ///
     ///     let ray = Ray::new(
-    ///         point![1.0, 1.0],
+    ///         point![2.0, 2.0],
     ///         Unit::new_normalize(vector![0.0, 1.0])
     ///     );
-    ///     let point = point![-2.0, 200.0];
+    ///     let point = point![1.0, 5.0];
     ///
     ///     assert_relative_eq!(
     ///         ray.distance_to_point(&point),
-    ///         3.0,
+    ///         1.0,
     ///     );
     ///
     ///
@@ -97,7 +166,7 @@ impl Ray {
         if projection <= 0.0 {
             // The projection can only be below 0 when the point is *behind*
             // the origin (relative to the direction vector)
-            w.norm()
+            -w.norm()
         } else {
             (w - self.direction.scale(projection)).norm()
         }

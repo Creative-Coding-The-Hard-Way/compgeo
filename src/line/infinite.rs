@@ -1,7 +1,8 @@
 use nalgebra::{Point2, Unit, Vector2};
 
 /// A line in 2-dimensions which extends infinitely in either direction.
-/// The line is defined by its normal and offset along the normal to create
+///
+/// A line is defined by its normal and offset along the normal to create
 /// the following implicit construction:
 ///
 /// ```math
