@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["approx","bytemuck","compgeo","matrixmultiply","nalgebra","nalgebra_macros","num_complex","num_integer","num_rational","num_traits","paste","proc_macro2","quote","rawpointer","safe_arch","simba","syn","typenum","unicode_ident","wide"];

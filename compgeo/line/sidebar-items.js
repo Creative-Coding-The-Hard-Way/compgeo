@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Line","A line in 2-dimensions which extends infinitely in either direction."],["Ray","A Ray is a half-line which begins at an origin point."],["Segment","A line-segment defined by a start point and an end point."]]});

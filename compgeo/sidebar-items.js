@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["line","Structs and algorithms for Lines in two dimensions."],["operations","Misc. operations on points and vectors in 2d."]]});

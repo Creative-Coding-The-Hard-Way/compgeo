@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["perp_unit2d","Compute a perpendicular vector by rotating the given vector 90 degrees counterclockwise."],["perp_vec2d","Compute a perpendicular vector by rotating the given vector 90 degrees counterclockwise."]]});
